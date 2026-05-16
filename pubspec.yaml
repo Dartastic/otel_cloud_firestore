@@ -1,0 +1,26 @@
+name: otel_cloud_firestore
+description: OpenTelemetry instrumentation for `package:cloud_firestore`.
+  Extension methods on DocumentReference, CollectionReference, and Query
+  that wrap read/write/listen calls with `db.*` semconv spans.
+version: 0.1.0-beta.1-wip
+repository: https://github.com/dartastic/otel_cloud_firestore
+homepage: https://dartastic.io
+
+environment:
+  sdk: ^3.0.0
+  flutter: ">=3.0.0"
+
+dependencies:
+  cloud_firestore: ^5.0.0
+  dartastic_opentelemetry: ^1.1.0-beta.4
+  dartastic_opentelemetry_api: ^1.0.0-beta.6
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  dart_flutter_team_lints: ^3.5.2
+  fake_cloud_firestore: ^3.0.0
+  flutter_test:
+    sdk: flutter
+  pub_semver: ^2.0.0
+  pubspec_parse: ^1.5.0
