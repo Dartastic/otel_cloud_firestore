@@ -20,14 +20,12 @@ Attributes _baseAttrs({
   String? document,
 }) {
   final m = <String, Object>{
-    Database.dbSystem.key: _dbSystem,
-    Database.dbSystemName.key: _dbSystem,
-    Database.dbOperation.key: operation,
-    Database.dbOperationName.key: operation,
+    Db.dbSystemName.key: _dbSystem,
+    Db.dbOperationName.key: operation,
   };
   if (collection != null) {
     m[FirestoreSemantics.collection.key] = collection;
-    m[Database.dbCollectionName.key] = collection;
+    m[Db.dbCollectionName.key] = collection;
   }
   if (document != null) m[FirestoreSemantics.document.key] = document;
   return OTel.attributesFromMap(m);
@@ -67,7 +65,7 @@ Future<R> _traced<R>(
   } catch (e, st) {
     span.addAttributes(OTel.attributes([
       OTel.attributeString(
-        ErrorResource.errorType.key,
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
@@ -82,7 +80,7 @@ Future<R> _traced<R>(
 /// Traced operations on a [DocumentReference].
 ///
 /// Each call opens a `CLIENT` span named
-/// `firestore <op> <collection>/<doc>` with `db.system=firestore`
+/// `firestore <op> <collection>/<doc>` with `db.system.name=firestore`
 /// and `db.firestore.collection` / `db.firestore.document`. On
 /// exception the span is flipped to `Error` (recordException →
 /// setStatus, in OTel-spec order) and the original error is
@@ -184,7 +182,7 @@ extension OTelQuery<T> on Query<T> {
         final snap = options == null ? await get() : await get(options);
         span?.addAttributes(OTel.attributes([
           OTel.attributeInt(
-            Database.dbResponseReturnedRows.key,
+            Db.dbResponseReturnedRows.key,
             snap.docs.length,
           ),
         ]));
@@ -232,7 +230,7 @@ String? _pathFromQuery(Query<dynamic> q) {
 
 /// Traced wrapper for [FirebaseFirestore.runTransaction].
 ///
-/// The span carries `db.operation=transaction` and (when Firestore
+/// The span carries `db.operation.name=transaction` and (when Firestore
 /// retries) the attempt count on
 /// `db.firestore.transaction.attempt`.
 Future<R> tracedFirestoreTransaction<R>(

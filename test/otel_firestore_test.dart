@@ -63,16 +63,16 @@ void main() {
       );
       expect(setSpan.kind, equals(SpanKind.client));
       final setAttrs = _attrs(setSpan);
-      expect(setAttrs['db.system'], equals('firestore'));
       expect(setAttrs['db.system.name'], equals('firestore'));
-      expect(setAttrs['db.operation'], equals('set'));
+      expect(setAttrs['db.operation.name'], equals('set'));
+      expect(setAttrs['db.collection.name'], equals('users'));
       expect(setAttrs['db.firestore.collection'], equals('users'));
       expect(setAttrs['db.firestore.document'], equals('alice'));
 
       final getSpan = exporter.spans.firstWhere(
         (s) => s.name == 'firestore get users/alice',
       );
-      expect(_attrs(getSpan)['db.operation'], equals('get'));
+      expect(_attrs(getSpan)['db.operation.name'], equals('get'));
       expect(setSpan.status, isNot(equals(SpanStatusCode.Error)));
     });
 
@@ -85,7 +85,7 @@ void main() {
         (s) => s.name == 'firestore add orders',
       );
       final attrs = _attrs(span);
-      expect(attrs['db.operation'], equals('add'));
+      expect(attrs['db.operation.name'], equals('add'));
       expect(attrs['db.firestore.collection'], equals('orders'));
     });
 
@@ -100,7 +100,7 @@ void main() {
         (s) => s.name == 'firestore query users',
       );
       final attrs = _attrs(span);
-      expect(attrs['db.operation'], equals('query'));
+      expect(attrs['db.operation.name'], equals('query'));
       expect(attrs['db.response.returned_rows'], equals(2));
     });
 
@@ -169,7 +169,7 @@ void main() {
         (s) => s.name == 'firestore transaction',
       );
       final attrs = _attrs(span);
-      expect(attrs['db.operation'], equals('transaction'));
+      expect(attrs['db.operation.name'], equals('transaction'));
       expect(attrs['db.firestore.transaction.attempt'], equals(1));
     });
 

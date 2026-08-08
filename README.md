@@ -48,7 +48,7 @@ await tracedFirestoreBatchCommit(batch, size: 2);
 
 ## Span shape
 
-| Span name | `db.operation` | Other attributes |
+| Span name | `db.operation.name` | Other attributes |
 |---|---|---|
 | `firestore get <collection>/<doc>` | `get` | `db.firestore.collection`, `db.firestore.document` |
 | `firestore set <collection>/<doc>` | `set` | `db.firestore.collection`, `db.firestore.document` |
@@ -60,8 +60,9 @@ await tracedFirestoreBatchCommit(batch, size: 2);
 | `firestore transaction` | `transaction` | `db.firestore.transaction.attempt` (latest) |
 | `firestore batch.commit` | `batch.commit` | `db.firestore.batch.size` (when supplied) |
 
-Every span also carries `db.system=firestore` and (the current
-semconv) `db.system.name=firestore`.
+Every span also carries `db.system.name=firestore` (the current
+semconv key; the deprecated `db.system` is not emitted), and spans
+with a known collection carry `db.collection.name`.
 
 - **Span kind**: `CLIENT`.
 - **Span status**: `Error` if the Firestore call throws.
