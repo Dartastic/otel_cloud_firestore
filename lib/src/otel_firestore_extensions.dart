@@ -4,7 +4,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'firestore_semantics.dart';
 import 'firestore_suppression.dart';
@@ -12,7 +12,7 @@ import 'firestore_suppression.dart';
 const _tracerName = 'otel_cloud_firestore';
 const _dbSystem = 'firestore';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 Attributes _baseAttrs({
   required String operation,
@@ -28,7 +28,7 @@ Attributes _baseAttrs({
     m[Db.dbCollectionName.key] = collection;
   }
   if (document != null) m[FirestoreSemantics.document.key] = document;
-  return OTel.attributesFromMap(m);
+  return OTelAPI.attributesFromMap(m);
 }
 
 String _spanName(String operation, {String? collection, String? document}) {
@@ -63,8 +63,8 @@ Future<R> _traced<R>(
   try {
     return await op(span);
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
         ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
@@ -180,8 +180,8 @@ extension OTelQuery<T> on Query<T> {
       collection: _pathFromQuery(this),
       op: (span) async {
         final snap = options == null ? await get() : await get(options);
-        span?.addAttributes(OTel.attributes([
-          OTel.attributeInt(
+        span?.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(
             Db.dbResponseReturnedRows.key,
             snap.docs.length,
           ),
@@ -246,8 +246,8 @@ Future<R> tracedFirestoreTransaction<R>(
       return db.runTransaction<R>(
         (txn) {
           attempt++;
-          span?.addAttributes(OTel.attributes([
-            OTel.attributeInt(
+          span?.addAttributes(OTelAPI.attributes([
+            OTelAPI.attributeInt(
               FirestoreSemantics.transactionAttempt.key,
               attempt,
             ),
@@ -271,8 +271,8 @@ Future<void> tracedFirestoreBatchCommit(
     'batch.commit',
     op: (span) {
       if (size != null) {
-        span?.addAttributes(OTel.attributes([
-          OTel.attributeInt(FirestoreSemantics.batchSize.key, size),
+        span?.addAttributes(OTelAPI.attributes([
+          OTelAPI.attributeInt(FirestoreSemantics.batchSize.key, size),
         ]));
       }
       return batch.commit();
