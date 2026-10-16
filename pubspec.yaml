@@ -3,7 +3,7 @@ description: >-
   OpenTelemetry instrumentation for cloud_firestore by Dartastic.io. Adds
   standard OpenTelemetry observability to applications that use
   cloud_firestore.
-version: 0.3.1-wip
+version: 0.3.1
 repository: https://github.com/dartastic/otel_cloud_firestore
 homepage: https://dartastic.io
 
